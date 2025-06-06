@@ -143,31 +143,44 @@ npm run dev
 │   ├── index.ts       # Application entry point
 │   ├── config.ts      # Loads and exports environment variables
 │   └── consumer.ts    # Defines the Consumer class to process Event Hub messages
+│   └── utils.ts       # Function to generate formatted timestamp
 ├── .env               # Environment variable definitions (not committed)
 ├── package.json       # npm configuration and scripts
 ├── tsconfig.json      # TypeScript compiler settings
 └── README.md          # This file
 ```
 
-* **index.ts**
+---
 
-  * Listens for `SIGINT` and `SIGTERM` to perform a graceful shutdown.
-  * Imports `Config` to retrieve environment values.
-  * Calls `Consumer.start(...)` with the configured consumer group, connection string, and Event Hub name.
+## Log Output
 
-* **config.ts**
+Below is a sample console output illustrating how incoming events are logged. Assume that two events with simple payloads arrive on partition 0:
 
-  * Uses `dotenv` to load environment variables.
-  * Defines an `EnvConfig` interface for type safety.
-  * Exports a `config` object with three properties: `consumer_group`, `consumer_connection`, `consumer_name`.
+```
+[06/06/25 - 14:38:07] Partition "0": received 2 event(s).
+[06/06/25 - 14:38:07] Event received:
+    {
+        "id": "a1b2c3",
+        "message": "UserSignedUp",
+        "details": {
+            "username": "jdoe",
+            "email": "jdoe@example.com"
+        }
+    }
+[06/06/25 - 14:38:07] Event received:
+    {
+        "id": "d4e5f6",
+        "message": "OrderCreated",
+        "details": {
+            "orderId": "ORD12345",
+            "amount": 79.99,
+            "currency": "USD"
+        }
+    }
+```
 
-* **consumer.ts**
-
-  * Defines a `Consumer` class with a private constructor.
-  * The static `start` method instantiates the client and subscribes to events.
-  * `processEventsHandler` logs incoming event details (partition, offset, sequence, body) and updates checkpoints.
-  * `processErrorHandler` logs errors, including the partition context.
-  * `subscribeToEvents` wires up the Azure SDK’s `subscribe` method using bound handler functions.
+- The first line shows a timestamp, the partition ID, and how many events were received.
+- Each subsequent block shows the timestamp and the full JSON body of an event (pretty-printed with 4-space indentation).
 
 ---
 

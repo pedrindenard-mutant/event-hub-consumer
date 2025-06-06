@@ -48,9 +48,9 @@ export default class Consumer {
         }
 
         console.log(`[${timestamp()}] Partition "${context.partitionId}": received ${events.length} event(s).`);
-
+        
         for (const event of events) {
-            console.log(`[${timestamp()}] Event received:`);
+            console.log(`[${timestamp(event.enqueuedTimeUtc)}] Event received:`);
             console.log(JSON.stringify(event.body, undefined, 4));
         }
 
