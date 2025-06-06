@@ -1,4 +1,5 @@
 import { EventHubConsumerClient, ReceivedEventData, PartitionContext } from "@azure/event-hubs";
+import { timestamp } from "./utils";
 
 /**
  * @class Consumer
@@ -42,26 +43,24 @@ export default class Consumer {
      */
     private async processEventsHandler(events: ReceivedEventData[], context: PartitionContext): Promise<void> {
         if (events.length === 0) {
-            console.log(`[${(new Date).toISOString()}] “No new events” — partition ${context.partitionId}`);
+            console.log(`[${timestamp()}] “No new events” — partition ${context.partitionId}`);
             return;
         }
 
-        console.log(`[${(new Date).toISOString()}] Partition "${context.partitionId}": received ${events.length} event(s).`);
+        console.log(`[${timestamp()}] Partition "${context.partitionId}": received ${events.length} event(s).`);
 
         for (const event of events) {
-            console.log(`\n[${(new Date).toISOString()}] Event received:`);
-            console.log(`  · Partition: ${context.partitionId}`);
-            console.log(`  · Offset: ${event.enqueuedTimeUtc.toISOString()}`);
-            console.log(`  · Sequence: ${event.sequenceNumber}`);
-            console.log(`  · Body:`, JSON.stringify(event.body));
+            console.log(`[${timestamp()}] Event received:`);
+            console.log(JSON.stringify(event.body, undefined, 4));
         }
 
         try {
             await context.updateCheckpoint(events[events.length - 1]);
-            console.log(`[${(new Date).toISOString()}] Updated checkpoint for partition "${context.partitionId}", Seq#: ${events[events.length - 1].sequenceNumber}`);
         } catch (err) {
-            console.error(`[${(new Date).toISOString()}] Error updating checkpoint on partition "${context.partitionId}":`, err);
+            console.error(`[${timestamp()}] Error updating checkpoint on partition "${context.partitionId}":`, err);
         }
+
+        console.log(`\n`);
     }
 
     /**
@@ -71,9 +70,8 @@ export default class Consumer {
      * @returns {Promise<void>}
      */
     private async processErrorHandler(err: Error, context: PartitionContext): Promise<void> {
-        console.error(`\n[${(new Date).toISOString()}] Consumer error:`);
-        console.error(`  · Partition: ${context.partitionId}`);
-        console.error(`  · Message:`, err);
+        console.error(`\n[${timestamp()}] Consumer error:`);
+        console.error(`  - Message:`, err);
     }
 
     /**
