@@ -1,0 +1,8 @@
+/node_modules
+/build
+/keys
+
+db.sqlite
+
+.vscode
+.env
