@@ -51,8 +51,8 @@ CONSUMER_NAME=<Your Event Hub Name>
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-org/azure-eventhub-consumer-ts.git
-   cd aura-event-hub-consumer-ts
+   git clone https://github.com/pedrindenard-mutant/event-hub-consumer.git
+   cd event-hub-consumer
    ```
 
 2. **Install dependencies**
